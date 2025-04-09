@@ -51,30 +51,46 @@ def load_patient_data(filepath):
     Returns:
         list: List of patient dictionaries
     """
+    # BUG: No error handling for file not found
     with open(filepath, 'r') as file:
         return json.load(file)
 
-def clean_patient_data(data: dict) -> dict:
+def clean_patient_data(patients):
     """
-    Clean and validate patient data.
+    Clean patient data by:
+    - Capitalizing names
+    - Converting ages to integers
+    - Filtering out patients under 18
+    - Removing duplicates
     
     Args:
-        data: Dictionary containing patient information
+        patients (list): List of patient dictionaries
         
     Returns:
-        Cleaned patient data dictionary
+        list: Cleaned list of patient dictionaries
     """
-    # TODO: Fix the bugs in this function
-    # Hint: Look for these common issues:
-    # 1. Type conversion errors (str vs int)
-    # 2. Missing key checks
-    # 3. Invalid value ranges
-    # 4. Incorrect string operations
+    cleaned_patients = []
     
-    # BUG: Add your bug description here
-    # FIX: Add your fix description here
+    for patient in patients:
+        # BUG: Typo in key 'nage' instead of 'name'
+        patient['nage'] = patient['name'].title()
+        
+        # BUG: Wrong method name (fill_na vs fillna)
+        patient['age'] = patient['age'].fill_na(0)
+        
+        # BUG: Wrong method name (drop_duplcates vs drop_duplicates)
+        patient = patient.drop_duplcates()
+        
+        # BUG: Wrong comparison operator (= vs ==)
+        if patient['age'] = 18:
+            # BUG: Logic error - keeps patients under 18 instead of filtering them out
+            cleaned_patients.append(patient)
     
-    return data
+    # BUG: Missing return statement for empty list
+    if not cleaned_patients:
+        return None
+    
+    return cleaned_patients
 
 def main():
     """Main function to run the script."""
@@ -84,15 +100,17 @@ def main():
     # Construct the path to the data file
     data_path = os.path.join(script_dir, 'data', 'raw', 'patients.json')
     
-    # Load the patient data
+    # BUG: No error handling for load_patient_data failure
     patients = load_patient_data(data_path)
     
     # Clean the patient data
     cleaned_patients = clean_patient_data(patients)
     
+    # BUG: No check if cleaned_patients is None
     # Print the cleaned patient data
     print("Cleaned Patient Data:")
     for patient in cleaned_patients:
+        # BUG: Using 'name' key but we changed it to 'nage'
         print(f"Name: {patient['name']}, Age: {patient['age']}, Diagnosis: {patient['diagnosis']}")
     
     # Return the cleaned data (useful for testing)
