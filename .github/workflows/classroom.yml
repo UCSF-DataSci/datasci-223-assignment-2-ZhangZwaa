@@ -28,17 +28,18 @@ jobs:
         
         # Add upstream remote if not exists
         if ! git remote | grep -q upstream; then
-          git remote add upstream https://github.com/UCSF-DataSci/ucsf-datasci-223-25-winter-test-0-datasci223_assignment1.git
+          git remote add upstream https://github.com/UCSF-DataSci/ucsf-datasci-223-25-winter-datasci-223-assignment-2-datasci223_assignment2.git
         fi
         
         # Fetch upstream without merging
         git fetch upstream
         
         # Overwrite local .github/tests and workflow files with upstream versions
-        git checkout upstream/main -- .github/tests/ .github/workflows/classroom.yml || true
+        git checkout upstream/main -- .github/tests/
+        git checkout upstream/main -- .github/workflows/classroom.yml
         
-        # Optionally, remove upstream remote to avoid confusion
-        git remote remove upstream || true
+        # Remove upstream remote to avoid confusion
+        git remote remove upstream
     
     - name: Install test dependencies
       run: |
@@ -47,7 +48,9 @@ jobs:
     
     - name: Run tests
       run: |
-        pytest .github/tests/test_assignment.py -v
+        pytest .github/tests/test_patient_data_cleaner.py -v
+        pytest .github/tests/test_med_dosage_calculator.py -v
+        pytest .github/tests/test_cohort_analysis.py -v
     
     - name: Check for README.md
       run: |
