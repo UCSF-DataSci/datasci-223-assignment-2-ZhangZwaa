@@ -40,6 +40,9 @@ Usage:
 
 import json
 import os
+import pdb
+import pandas as pd
+import sys
 
 def load_patient_data(filepath):
     """
@@ -51,30 +54,60 @@ def load_patient_data(filepath):
     Returns:
         list: List of patient dictionaries
     """
-    with open(filepath, 'r') as file:
-        return json.load(file)
+    # BUG: No error handling for file not found
+    try:
+        with open(filepath, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print("File not found!")
+        sys.exit(1)
 
-def clean_patient_data(data: dict) -> dict:
+def clean_patient_data(patients):
     """
-    Clean and validate patient data.
+    Clean patient data by:
+    - Capitalizing names
+    - Converting ages to integers
+    - Filtering out patients under 18
+    - Removing duplicates
     
     Args:
-        data: Dictionary containing patient information
+        patients (list): List of patient dictionaries
         
     Returns:
-        Cleaned patient data dictionary
+        list: Cleaned list of patient dictionaries
     """
-    # TODO: Fix the bugs in this function
-    # Hint: Look for these common issues:
-    # 1. Type conversion errors (str vs int)
-    # 2. Missing key checks
-    # 3. Invalid value ranges
-    # 4. Incorrect string operations
+    cleaned_patients = []
+    seen = set()
+
+    for patient in patients:
+        # BUG: Typo in key 'nage' instead of 'name'
+        # FIX: Correct the name
+        patient['name'] = patient['name'].title()
+        
+        # BUG: Wrong method name (fill_na vs fillna)
+        # FIX: Using int to convert ages to integers
+        patient['age'] = int(patient.get('age', 0))
+        
+        # BUG: Wrong method name (drop_duplcates vs drop_duplicates)
+        # FIX: Drop duplicates at the end of this function
+        # patient = patient.drop_duplicates()
+        
+        # BUG: Wrong comparison operator (= vs ==)
+        # FIX: Change to >= to correctly fliter patients under 18 out
+        if patient['age'] >= 18:
+            # BUG: Logic error - keeps patients under 18 instead of filtering them out
+            patient_tuple = tuple(sorted(patient.items()))
+            # FIX: Duplicates should be removed here
+            if patient_tuple not in seen:
+                seen.add(patient_tuple)
+                cleaned_patients.append(patient)
     
-    # BUG: Add your bug description here
-    # FIX: Add your fix description here
+    # BUG: Missing return statement for empty list
+    if not cleaned_patients:
+        print("The list is empty!")
+        return None
     
-    return data
+    return cleaned_patients
 
 def main():
     """Main function to run the script."""
@@ -84,15 +117,17 @@ def main():
     # Construct the path to the data file
     data_path = os.path.join(script_dir, 'data', 'raw', 'patients.json')
     
-    # Load the patient data
+    # BUG: No error handling for load_patient_data failure
     patients = load_patient_data(data_path)
     
     # Clean the patient data
     cleaned_patients = clean_patient_data(patients)
-    
+    print(f"Type: {type(cleaned_patients)}")
+    # BUG: No check if cleaned_patients is None
     # Print the cleaned patient data
     print("Cleaned Patient Data:")
     for patient in cleaned_patients:
+        # BUG: Using 'name' key but we changed it to 'nage'
         print(f"Name: {patient['name']}, Age: {patient['age']}, Diagnosis: {patient['diagnosis']}")
     
     # Return the cleaned data (useful for testing)
