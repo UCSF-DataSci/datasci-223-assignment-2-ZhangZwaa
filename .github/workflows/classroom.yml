@@ -1,4 +1,4 @@
-name: Auto-grading (Simplified Upstream Fetch, Unified Tests, No legacy tests/)
+name: Auto-grading
 
 on:
   push:
@@ -13,33 +13,23 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        fetch-depth: 0  # Fetch all history for all branches and tags
+        fetch-depth: 0
     
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
     
-    - name: Fetch latest tests and workflow from upstream (read-only)
+    - name: Download test files
       run: |
-        # Configure git user identity
-        git config --global user.name "GitHub Actions Bot"
-        git config --global user.email "actions@github.com"
+        # Create test directory if it doesn't exist
+        mkdir -p .github/tests
         
-        # Add upstream remote if not exists
-        if ! git remote | grep -q upstream; then
-          git remote add upstream https://github.com/UCSF-DataSci/ucsf-datasci-223-25-winter-datasci-223-assignment-2-datasci223_assignment2.git
-        fi
-        
-        # Fetch upstream without merging
-        git fetch upstream
-        
-        # Overwrite local .github/tests and workflow files with upstream versions
-        git checkout upstream/main -- .github/tests/
-        git checkout upstream/main -- .github/workflows/classroom.yml
-        
-        # Remove upstream remote to avoid confusion
-        git remote remove upstream
+        # Download test files directly
+        curl -o .github/tests/test_patient_data_cleaner.py https://raw.githubusercontent.com/UCSF-DataSci/ucsf-datasci-223-25-winter-datasci-223-assignment-2-datasci223_assignment2/main/.github/tests/test_patient_data_cleaner.py
+        curl -o .github/tests/test_med_dosage_calculator.py https://raw.githubusercontent.com/UCSF-DataSci/ucsf-datasci-223-25-winter-datasci-223-assignment-2-datasci223_assignment2/main/.github/tests/test_med_dosage_calculator.py
+        curl -o .github/tests/test_cohort_analysis.py https://raw.githubusercontent.com/UCSF-DataSci/ucsf-datasci-223-25-winter-datasci-223-assignment-2-datasci223_assignment2/main/.github/tests/test_cohort_analysis.py
+        curl -o .github/tests/requirements.txt https://raw.githubusercontent.com/UCSF-DataSci/ucsf-datasci-223-25-winter-datasci-223-assignment-2-datasci223_assignment2/main/.github/tests/requirements.txt
     
     - name: Install test dependencies
       run: |
